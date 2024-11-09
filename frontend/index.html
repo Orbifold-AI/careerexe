@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ask a Question</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        h1 {
+            color: #333;
+        }
+        form {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        label {
+            font-weight: bold;
+            margin-top: 10px;
+            display: block;
+        }
+        input[type="text"], textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #28a745;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        #response {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #e9ecef;
+            border: 1px solid #ced4da;
+            border-radius: 5px;
+        }
+        .error {
+            color: red;
+            font-weight: bold;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Ask a Question</h1>
+
+    <!-- Access Layer -->
+    <div id="accessLayer">
+        <label for="accessCode">Please enter access code:</label>
+        <input type="text" id="accessCode" placeholder="Enter code" required>
+        <button onclick="checkAccess()">Submit</button>
+        <p id="accessError" class="error hidden">Incorrect code. Please try again.</p>
+    </div>
+
+    <!-- Main Form - Initially Hidden -->
+    <div id="mainForm" class="hidden">
+        <form id="questionForm">
+            <label for="question">Enter your question:</label>
+            <textarea id="question" rows="4" placeholder="Ask something like 给我前三个人在不同公司中担任过战略相关职位，拥有最丰富的战略经验？" required></textarea>
+            <button type="submit">Submit</button>
+        </form>
+        <div id="response"></div>
+    </div>
+
+    <script>
+        function checkAccess() {
+            const accessCode = document.getElementById('accessCode').value;
+            const accessError = document.getElementById('accessError');
+
+            // Send request to backend for verification
+            fetch('http://127.0.0.1:5000/verify', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ code: accessCode })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.valid) {
+                    document.getElementById('accessLayer').classList.add('hidden');
+                    document.getElementById('mainForm').classList.remove('hidden');
+                } else {
+                    accessError.classList.remove('hidden');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                accessError.classList.remove('hidden');
+            });
+        }
+
+        document.getElementById('questionForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const questionInput = document.getElementById('question');
+            const responseDiv = document.getElementById('response');
+            const question = questionInput.value;
+
+            if (!question) {
+                responseDiv.innerHTML = '<p class="error">Please enter a question.</p>';
+                return;
+            }
+
+            // Show the loading message
+            responseDiv.innerHTML = '<p>Please be patient, your response is being generated...</p>';
+
+            try {
+                const response = await fetch('http://127.0.0.1:5000/ask', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ question })
+                });
+
+                if (response.ok) {
+                    const result = await response.json();
+                    responseDiv.innerHTML = `<strong>Response:</strong><br>${result.message}`;
+                } else {
+                    const errorText = await response.text();
+                    responseDiv.innerHTML = `<p class="error">Error: ${errorText}</p>`;
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                responseDiv.innerHTML = '<p class="error">An error occurred while submitting the question.</p>';
+            }
+        });
+    </script>
+
+</body>
+</html>
