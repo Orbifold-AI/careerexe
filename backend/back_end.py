@@ -21,7 +21,7 @@ def load_hardcoded_knowledge(file_path):
         return f"Error loading hardcoded knowledge: {str(e)}"
 
 # Load knowledge from a txt file
-KNOWLEDGE_BASE = load_hardcoded_knowledge('sample_10.csv')
+KNOWLEDGE_BASE = load_hardcoded_knowledge('sample_500.csv')
 
 def extract_csv_text(file_path):
     """Extract text from a CSV file."""
