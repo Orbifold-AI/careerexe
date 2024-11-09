@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ask a Question</title>
+    <title>人才库智能问答系统</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -54,6 +54,19 @@
             color: red;
             font-weight: bold;
         }
+        .suggestions {
+            margin-top: 10px;
+        }
+        .suggestion-item {
+            cursor: pointer;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 5px;
+            background-color: #f8f9fa;
+        }
+        .suggestion-item:hover {
+            background-color: #e2e6ea;
+        }
         .hidden {
             display: none;
         }
@@ -61,11 +74,11 @@
 </head>
 <body>
 
-    <h1>Ask a Question</h1>
+    <h1>人才库智能问答系统</h1>
 
     <!-- Access Layer -->
     <div id="accessLayer">
-        <label for="accessCode">Please enter access code:</label>
+        <label for="accessCode">请输入密码:</label>
         <input type="text" id="accessCode" placeholder="Enter code" required>
         <button onclick="checkAccess()">Submit</button>
         <p id="accessError" class="error hidden">Incorrect code. Please try again.</p>
@@ -74,8 +87,29 @@
     <!-- Main Form - Initially Hidden -->
     <div id="mainForm" class="hidden">
         <form id="questionForm">
-            <label for="question">Enter your question:</label>
-            <textarea id="question" rows="4" placeholder="Ask something like 给我前三个人在不同公司中担任过战略相关职位，拥有最丰富的战略经验？" required></textarea>
+            <label for="question">请输入您的查询问题:</label>
+            <textarea id="question" rows="4" placeholder="" required></textarea>
+            
+            <!-- Possible inputs -->
+            <p><strong>您可能感兴趣的问题:</strong></p>
+            <div class="suggestions" id="suggestions">
+                <div class="suggestion-item" onclick="insertSuggestion('找出排名前三个人，他们在不同公司中担任过战略相关职位，拥有最丰富的战略经验？')">
+                    找出排名前三个人，他们在不同公司中担任过战略相关职位，拥有最丰富的战略经验？
+                </div>
+                <div class="suggestion-item" onclick="insertSuggestion('哪些人在过去的工作经历中参与了多个跨部门的协作项目，且在多个公司中担任过不同职务？')">
+                    哪些人在过去的工作经历中参与了多个跨部门的协作项目，且在多个公司中担任过不同职务？
+                </div>
+                <div class="suggestion-item" onclick="insertSuggestion('哪些人曾在国际化团队中担任过领导职位，且有成功推动团队跨文化合作的经验？')">
+                    哪些人曾在国际化团队中担任过领导职位，且有成功推动团队跨文化合作的经验？
+                </div>
+                <div class="suggestion-item" onclick="insertSuggestion('哪些人曾在技术驱动型企业中担任过关键职位，且具有丰富的工程实施和技术管理经验？')">
+                    哪些人曾在技术驱动型企业中担任过关键职位，且具有丰富的工程实施和技术管理经验？
+                </div>
+                <div class="suggestion-item" onclick="insertSuggestion('哪些人曾在多个公司中担任过人力资源相关职位，且在人才招聘和组织架构优化方面有突出贡献？')">
+                    哪些人曾在多个公司中担任过人力资源相关职位，且在人才招聘和组织架构优化方面有突出贡献？
+                </div>
+            </div>
+
             <button type="submit">Submit</button>
         </form>
         <div id="response"></div>
@@ -87,7 +121,6 @@
             const accessError = document.getElementById('accessError');
 
             // Send request to backend for verification
-            // fetch('http://127.0.0.1:5000/verify', {
             fetch('https://careerexe-backend.onrender.com/verify', {
                 method: 'POST',
                 headers: {
@@ -108,6 +141,17 @@
                 console.error('Error:', error);
                 accessError.classList.remove('hidden');
             });
+        }
+
+        // Insert a suggestion into the textarea and remove it from the suggestions
+        function insertSuggestion(suggestion) {
+            const questionInput = document.getElementById('question');
+            questionInput.value = suggestion;
+
+            // Remove the selected suggestion from the list
+            const suggestionsDiv = document.getElementById('suggestions');
+            const selectedItem = event.target;
+            suggestionsDiv.removeChild(selectedItem);
         }
 
         document.getElementById('questionForm').addEventListener('submit', async (e) => {
