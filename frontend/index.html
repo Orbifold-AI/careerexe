@@ -87,7 +87,8 @@
             const accessError = document.getElementById('accessError');
 
             // Send request to backend for verification
-            fetch('http://127.0.0.1:5000/verify', {
+            // fetch('http://127.0.0.1:5000/verify', {
+            fetch('https://careerexe-backend.onrender.com/verify', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -125,7 +126,7 @@
             responseDiv.innerHTML = '<p>Please be patient, your response is being generated...</p>';
 
             try {
-                const response = await fetch('http://127.0.0.1:5000/ask', {
+                const response = await fetch('https://careerexe-backend.onrender.com/ask', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
