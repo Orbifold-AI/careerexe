@@ -34,7 +34,7 @@ def extract_csv_text(file_path):
     return text
 
 # Preload the CSV content from 'sample.csv' at startup
-CSV_CONTENT = extract_csv_text('sample_10.csv')
+CSV_CONTENT = extract_csv_text('sample_50.csv')
 
 @app.route('/verify', methods=['POST'])
 def verify_code():
