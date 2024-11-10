@@ -59,7 +59,8 @@ def ask_question():
             model='gpt-4o-mini',
             messages=[
                 {"role": "system", "content": f"Hard-coded knowledge:\n{KNOWLEDGE_BASE}"},
-                {"role": "system", "content": "Answer questions based on the uploaded CSV file only, strictly without referencing any online resources. This CSV file contains individuals' names, job histories, and educational backgrounds. If there are several rows in the CSV without a name, the information in those rows should be attributed to the most recent preceding individual with a listed name. If the user asks in English, respond in English; if the user asks in Chinese, respond in Chinese. If the question contains both English and Chinese, respond in Chinese."},
+                {"role": "system", "content": "Refer solely to the uploaded CSV file when answering questions, avoiding any online resources. Do not mention the source or format of the data. This CSV file includes individuals' names, job histories, and educational backgrounds. For any row missing a name, assign the information to the most recent prior individual with a name. Respond in English if the question is in English, in Chinese if the question is in Chinese, and in Chinese if the question combines English and Chinese."},
+                {"role": "system", "content": "Generate possible follow-up questions that users might ask and return to us."},
                 {"role": "user", "content": f"CSV Content: {CSV_CONTENT}\n\nUser Question: {user_question}"}
             ]
         )
